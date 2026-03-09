@@ -1,13 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Request, Response } from "express";
+import { userRouter } from "./Routes/user";
+import { roomRouter } from "./Routes/room";
 
 const app = express()
+app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-    res.json({
-        message: "hello world"
-    });
-})
+app.use("/user", userRouter);
+app.use("/room", roomRouter)
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+app.listen(3001, () => {
+    console.log("Server is running on port 3001");
 })
