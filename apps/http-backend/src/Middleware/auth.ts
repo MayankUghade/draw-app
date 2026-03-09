@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "@repo/backend-common/config";
 
 interface JwtPayload {
   id: string;
@@ -20,10 +21,14 @@ export function authMiddleware(
     //Extract the token from the header
     const token = authHeader.split(" ")[1];
 
+    if (!JWT_SECRET) {
+      throw new Error("JWT_SECRET not defined");
+    }
+
     //Verify the token
     const decoded = jwt.verify(
       token as string,
-      process.env.JWT_SECRET as string,
+      JWT_SECRET,
     ) as JwtPayload;
 
     req.body.user = {

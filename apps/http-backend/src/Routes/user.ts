@@ -2,28 +2,31 @@ import express, { Router } from "express";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "@repo/backend-common/config";
+import { UserSchema } from "@repo/common/types";
 
 export const userRouter:Router = express.Router();
 
 userRouter.post("/signUp", async(req:Request, res:Response)=>{
     try {
-        const userName = req.body.userName;
-        const password = req.body.password;
+      const parsed = UserSchema.safeParse(req.body);
 
+      if (!parsed.success) {
+        return res.status(400).json({
+          message: "Invalid input",
+          errors: parsed.error.flatten()
+        });
+      }
 
-        if (!userName || !password) {
-          return res.status(400).json({ message: "All fields are required" });
-        }
+      const { userName, password, name } = parsed.data;
 
-        const existingUser = false;
-        if (existingUser) {
+      const existingUser = false;
+      if (existingUser) {
         return res.status(409).json({ Error, message: "User already exists" });
-        }
+      }
  
         const hashedPassword = await bcrypt.hash(password, 10)
-
-        const jwtSecret = process.env.JWT_SECRET;
-        if (!jwtSecret) {
+        if (!JWT_SECRET) {
           throw new Error("JWT_SECRET not defined");
         }
 
@@ -31,8 +34,9 @@ userRouter.post("/signUp", async(req:Request, res:Response)=>{
           {
             id: userName,
             userName,
+            name,
           },
-          jwtSecret,
+          JWT_SECRET,
           { expiresIn: "7d" }
         );
 
