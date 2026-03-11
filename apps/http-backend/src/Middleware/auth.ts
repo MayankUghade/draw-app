@@ -31,10 +31,10 @@ export function authMiddleware(
       JWT_SECRET,
     ) as JwtPayload;
 
-    req.body.user = {
-      id: decoded.id,
-      userName: decoded.userName,
-    };
+(req as any).user = {
+  id: decoded.id,
+  userName: decoded.userName,
+};
 
     next();
   } catch (error) {

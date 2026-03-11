@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express, { Request, Response } from "express";
+import express from "express";
 import { userRouter } from "./Routes/user";
 import { roomRouter } from "./Routes/room";
 
